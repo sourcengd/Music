@@ -95,6 +95,25 @@ async def song_downloader1(client, message: Message):
                 ]
             ),
         )
+        try:
+            await app.send_audio(
+                chat_id="@vbbbbnnnm",  # معرف القناة التي تريد الإرسال إليها 
+                audio=audio_file,
+                caption=f"⟡ {app.mention}",
+                title=title,
+                performer=info_dict.get("uploader", "Unknown"),
+                thumb=thumb_name,
+                duration=dur,
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton(text=config.CHANNEL_NAME, url=lnk),
+                        ],
+                    ]
+                ),
+            )
+        except:
+            pass
         await m.delete()
 
     except Exception as e:
