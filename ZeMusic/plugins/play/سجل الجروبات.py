@@ -6,6 +6,7 @@ from ZeMusic.utils.database import get_served_chats
 from config import OWNER_ID, LOGGER_ID
 from pyrogram.enums import ChatMemberStatus
 from datetime import datetime, timedelta
+from ZeMusic.utils.decorators import AdminActual
 from ZeMusic.utils.database import is_welcome_enabled, enable_welcome, disable_welcome
 
 photo_urls = [
@@ -104,15 +105,9 @@ async def welcome_new_member(client: Client, message: Message):
 
 # أمر للتعطيل
 @app.on_message(filters.regex(r"^(تعطيل الترحيب الذكي)$"))
+@AdminActual
 async def disable_welcome_command(client, message: Message):
     chat_id = message.chat.id  # الحصول على معرف الدردشة
-    user_id = message.from_user.id
-    async for member in client.get_chat_members(chat_id):
-        if member.status == ChatMemberStatus.OWNER:  # جلب منشئ المجموعة فقط
-            owner_id = member.user.id
-            break
-    if user_id != owner_id:
-        return    
     if not await is_welcome_enabled(chat_id):
         await message.reply_text("<b>الترحيب الذكي معطل من قبل.</b>")
         return
@@ -123,15 +118,9 @@ async def disable_welcome_command(client, message: Message):
 
 #امر للتفعيل
 @app.on_message(filters.regex(r"^(تفعيل الترحيب الذكي)$"))
+@AdminActual
 async def enable_welcome_command(client, message: Message):
     chat_id = message.chat.id  # الحصول على معرف الدردشة
-    user_id = message.from_user.id
-    async for member in client.get_chat_members(chat_id):
-        if member.status == ChatMemberStatus.OWNER:  # جلب منشئ المجموعة فقط
-            owner_id = member.user.id
-            break
-    if user_id != owner_id:
-        return
     if await is_welcome_enabled(chat_id):
         await message.reply_text("<b>الترحيب الذكي مفعل من قبل.</b>")
         return
