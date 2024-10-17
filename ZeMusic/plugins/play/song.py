@@ -15,6 +15,28 @@ from ZeMusic import app
 from ZeMusic.plugins.play.filters import command
 from ZeMusic.utils.decorators import AdminActual
 from ZeMusic.utils.database import is_search_enabled, enable_search, disable_search
+import requests, json, redis
+import time
+
+ID_CN = -1002256653433
+TOOKEN = "7117654702:AAEh_WSXs5ITtNurJKuNdeMl7RzwpT23PEU" 
+rds = redis.Redis('localhost', decode_responses=True)
+def time_to_seconds(time):
+    stringt = str(time)
+    return sum(
+        int(x) * 60 ** i for i, x in enumerate(reversed(stringt.split(":")))
+    )
+                        
+def Yochannel(performer, title, audio_file,thumb):
+    if not os.path.exists(audio_file):
+        return
+    payload = {'thumb': thumb,'title': title,'performer': performer,"chat_id": ID_CN,}
+    with open(audio_file, 'rb') as audio:
+        files = {'audio': audio}
+        response = requests.post(
+            f"https://api.telegram.org/bot{TOOKEN}/sendAudio",data=payload,files=files)
+    return response.json()
+
 
 def remove_if_exists(path):
     if os.path.exists(path):
@@ -37,6 +59,35 @@ async def song_downloader(client, message: Message):
         if not results:
             await m.edit("- لم يتم العثـور على نتائج حاول مجددا")
             return
+        if not results:
+            await m.edit("- لم يتم العثـور على نتائج حاول مجددا")
+            return
+        if not results[0]:
+            await m.edit("- لم يتم العثـور على نتائج حاول مجددا")
+            return            
+        if not results[0]["duration"]:
+            await m.edit("- لم يتم العثـور على نتائج حاول مجددا")
+            return            
+        tim = int(time_to_seconds(results[0]["duration"]))
+        desthone = time.strftime('%M:%S', time.gmtime(tim))        
+        id_odo = results[0]['url_suffix']
+        if rds.hget("yut1", id_odo):
+            audio_id = rds.hget("yut1", id_odo)
+            audio_file = f'https://t.me/vbbbbnnnm/{audio_id}'
+            await message.reply_audio(
+            audio=audio_file,
+            caption=f"⟡ {app.mention} ↠ {desthone}", 
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                                              InlineKeyboardButton(text=config.CHANNEL_NAME, url=lnk),
+                    ],
+                ]
+            ),
+        )
+        
+            return await m.delete()
+        
 
         link = f"https://youtube.com{results[0]['url_suffix']}"
         title = results[0]["title"][:40]
@@ -97,28 +148,10 @@ async def song_downloader(client, message: Message):
                 ]
             ),
         )
-
-        try:
-            await app.send_audio(
-                chat_id="@vbbbbnnnm",  # معرف القناة التي تريد الإرسال إليها 
-                audio=audio_file,
-                caption=f"⟡ {app.mention}",
-                title=title,
-                performer=info_dict.get("uploader", "Unknown"),
-                thumb=thumb_name,
-                duration=dur,
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(text=config.CHANNEL_NAME, url=lnk),
-                        ],
-                    ]
-                ),
-            )
-        except:
-            pass
         await m.delete()
-
+        ter = Yochannel(info_dict.get("uploader", "Unknown"), title, audio_file,thumb_name)
+        id_audio = ter['result']['message_id']
+        rds.hset(f"yut1", id_odo, id_audio)
     except Exception as e:
         await m.edit(f"error, wait for bot owner to fix\n\nError: {str(e)}")
         print(e)
