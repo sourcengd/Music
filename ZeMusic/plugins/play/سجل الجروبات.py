@@ -105,7 +105,7 @@ async def welcome_new_member(client: Client, message: Message):
                 await message.reply_text(welcome_text, reply_markup=keyboard)
 
 # أمر للتعطيل
-@app.on_message(command(["تعطيل الترحيب الذكي"]))
+@app.on_message(command(["تعطيل الترحيب الذكي"]) & filters.group)
 @AdminActual
 async def disable_welcome_command(client, message: Message):
     chat_id = message.chat.id  # الحصول على معرف الدردشة
@@ -118,7 +118,7 @@ async def disable_welcome_command(client, message: Message):
 #######&&&&&&#######
 
 #امر للتفعيل
-@app.on_message(command(["تفعيل الترحيب الذكي"]))
+@app.on_message(command(["تفعيل الترحيب الذكي"]) & filters.group)
 @AdminActual
 async def enable_welcome_command(client, message: Message):
     chat_id = message.chat.id  # الحصول على معرف الدردشة
