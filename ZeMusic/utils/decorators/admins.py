@@ -125,7 +125,9 @@ def AdminActual(mystic):
                 )
 
         try:
-            if message.text not in ["تعطيل اليوتيوب", "تفعيل اليوتيوب"]:
+            if message.text not in ["تعطيل اليوتيوب", "تفعيل اليوتيوب",
+                                    "تفعيل المغادرة الذكي", "تعطيل المغادرة الذكي",
+                                    "تفعيل الترحيب الذكي", "تعطيل الترحيب الذكي"]:
                 await message.delete()
         except:
             pass
