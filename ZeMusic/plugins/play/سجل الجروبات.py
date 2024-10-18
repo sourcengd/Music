@@ -6,6 +6,7 @@ from ZeMusic.utils.database import get_served_chats
 from config import OWNER_ID, LOGGER_ID
 from pyrogram.enums import ChatMemberStatus
 from datetime import datetime, timedelta
+from ZeMusic.plugins.play.filters import command
 from ZeMusic.utils.decorators import AdminActual
 from ZeMusic.utils.database import is_welcome_enabled, enable_welcome, disable_welcome
 
@@ -104,7 +105,7 @@ async def welcome_new_member(client: Client, message: Message):
                 await message.reply_text(welcome_text, reply_markup=keyboard)
 
 # أمر للتعطيل
-@app.on_message(filters.regex(r"^(تعطيل الترحيب الذكي)$"))
+@app.on_message(command(["تعطيل الترحيب الذكي"]))
 @AdminActual
 async def disable_welcome_command(client, message: Message):
     chat_id = message.chat.id  # الحصول على معرف الدردشة
@@ -117,7 +118,7 @@ async def disable_welcome_command(client, message: Message):
 #######&&&&&&#######
 
 #امر للتفعيل
-@app.on_message(filters.regex(r"^(تفعيل الترحيب الذكي)$"))
+@app.on_message(command(["تفعيل الترحيب الذكي"]))
 @AdminActual
 async def enable_welcome_command(client, message: Message):
     chat_id = message.chat.id  # الحصول على معرف الدردشة
