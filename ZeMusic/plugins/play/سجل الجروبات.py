@@ -9,12 +9,12 @@ from datetime import datetime, timedelta
 from ZeMusic.plugins.play.filters import command
 from ZeMusic.utils.decorators import AdminActual
 from ZeMusic.utils.database import is_welcome_enabled, enable_welcome, disable_welcome
-import requests
+
 photo_urls = [
     "https://envs.sh/Wi_.jpg",
     "https://envs.sh/Wi_.jpg",
 ]
-dev2 = 5145609515
+
 @app.on_message(filters.new_chat_members, group=-2)
 async def welcome_new_member(client: Client, message: Message):
     chat = message.chat
@@ -23,9 +23,7 @@ async def welcome_new_member(client: Client, message: Message):
 
     for new_member in message.new_chat_members:
         # ترحيب بمطور البوت
-        if new_member.id == dev_id or new_member.id == dev2:
-            if new_member.id == dev2:
-                dev_id = dev2
+        if new_member.id == dev_id:
             info = await app.get_chat(dev_id)
             name = info.first_name
             markup = InlineKeyboardMarkup([[InlineKeyboardButton(name, user_id=dev_id)]])
@@ -88,40 +86,19 @@ async def welcome_new_member(client: Client, message: Message):
             )
 
             now = datetime.utcnow() + timedelta(hours=3)
+            welcome_text = (
+                f"𝐰𝐞𝐥𝐜𝐨𝐦𝐞 𝐭𝐨 𝐭𝐡𝐞 𝐠𝐫𝐨𝐮𝐩.🧸\n\n"
+                f"{chat.title}\n\n"
+                f"➥• Welcome  : {new_member.mention}\n"
+                f"➥• User : @{new_member.username or 'No username'}\n"
+                f"➥• time : {now.strftime('%I:%M %p')}\n"
+                f"➥• date : {now.strftime('%Y/%m/%d')}"
+            )
 
             if chat_photo:
                 photo_file = await client.download_media(chat_photo.big_file_id)
-                with open(photo_file, "rb") as f:
-                    data = f.read()
-                    resp = requests.post("https://envs.sh", files={"file": data})
-        
-                if resp.status_code == 200:
-                    upload_url = f"{resp.text}"    
-            
-                try:
-                    os.remove(photo_file)
-                except Exception as error:
-                    print(error)
-                welcome_text = (
-                    f"<a href='{upload_url}'>رابط الصوره</a>\n"
-                    f"𝐰𝐞𝐥𝐜𝐨𝐦𝐞 𝐭𝐨 𝐭𝐡𝐞 𝐠𝐫𝐨𝐮𝐩.🧸\n\n"
-                    f"{chat.title}\n\n"
-                    f"➥• Welcome  : {new_member.mention}\n"
-                    f"➥• User : @{new_member.username or 'No username'}\n"
-                    f"➥• time : {now.strftime('%I:%M %p')}\n"
-                    f"➥• date : {now.strftime('%Y/%m/%d')}"
-                )
-                # إرسال النص مع تفعيل وضع الويب تلقائياً (preview)
-                await message.reply_text(welcome_text, reply_markup=keyboard, disable_web_page_preview=False)
+                await message.reply_photo(photo=photo_file, caption=welcome_text, reply_markup=keyboard)
             else:
-                welcome_text = (
-                    f"𝐰𝐞𝐥𝐜𝐨𝐦𝐞 𝐭𝐨 𝐭𝐡𝐞 𝐠𝐫𝐨𝐮𝐩.🧸\n\n"
-                    f"{chat.title}\n\n"
-                    f"➥• Welcome  : {new_member.mention}\n"
-                    f"➥• User : @{new_member.username or 'No username'}\n"
-                    f"➥• time : {now.strftime('%I:%M %p')}\n"
-                    f"➥• date : {now.strftime('%Y/%m/%d')}"
-                )
                 await message.reply_text(welcome_text, reply_markup=keyboard)
 
 # أمر للتعطيل
@@ -147,4 +124,3 @@ async def enable_welcome_command(client, message: Message, _):
         return
     await enable_welcome(chat_id)
     await message.reply_text("<b>تم تفعيل الترحيب الذكي بنجاح.</b>")
-    
