@@ -54,7 +54,7 @@ async def shell_cmd(cmd):
 
 
 
-cookies_file = "SONALI/assets/cookies.txt"
+cookies_file = "ZeMusic/assets/cookies.txt"
 
 
 
