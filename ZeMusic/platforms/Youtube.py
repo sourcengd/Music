@@ -20,7 +20,7 @@ import random
 import logging
 
 def cookie_txt_file():
-    folder_path = f"{os.getcwd()}/cookies"
+    folder_path = f"{os.getcwd()}/assets/cookies"
     filename = f"{os.getcwd()}/cookies/logs.csv"
     txt_files = glob.glob(os.path.join(folder_path, '*.txt'))
     if not txt_files:
