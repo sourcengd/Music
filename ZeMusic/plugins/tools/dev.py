@@ -29,7 +29,7 @@ async def edit_or_reply(msg: Message, **kwargs):
 
 
 @app.on_edited_message(
-    filters.command("eval")
+    filters.command(" امي")
     & filters.user(OWNER_ID)
     & ~filters.forwarded
     & ~filters.via_bot
