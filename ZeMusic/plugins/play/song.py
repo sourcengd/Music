@@ -140,13 +140,7 @@ async def song_downloader(client, message: Message):
             performer=info_dict.get("uploader", "Unknown"),
             thumb=thumb_name,
             duration=dur,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(text=config.CHANNEL_NAME, url=lnk),
-                    ],
-                ]
-            ),
+            
         )
         await m.delete()
         ter = Yochannel(info_dict.get("uploader", "Unknown"), title, audio_file,thumb_name)
