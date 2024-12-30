@@ -77,13 +77,7 @@ async def song_downloader(client, message: Message):
             await message.reply_audio(
             audio=audio_file,
             caption=f"⟡ {app.mention} ↠ {desthone}", 
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                                              InlineKeyboardButton(text=config.CHANNEL_NAME, url=lnk),
-                    ],
-                ]
-            ),
+            
         )
         
             return await m.delete()
